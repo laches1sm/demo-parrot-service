@@ -2,12 +2,8 @@ package adapters
 
 import (
 	"encoding/json"
-	"errors"
-	"io"
 	"net/http"
 	"strconv"
-
-	"github.com/xeipuuv/gojsonschema"
 )
 
 func marshalAndWriteErrorResponse(w http.ResponseWriter, errorMessage string, statusCode int) error {

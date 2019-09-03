@@ -9,26 +9,33 @@ import (
 )
 
 type ParrotHTTPAdapter struct {
-	logger log.Logger
-	infra  infrastructure.ParrotInfra
+	Logger log.Logger
+	Infra  infrastructure.ParrotInfra
+}
+
+func NewParrotHTTPAdapter(logger log.Logger, infra infrastructure.ParrotInfra) *ParrotHTTPAdapter {
+	return &ParrotHTTPAdapter{
+		Logger: logger,
+		Infra:  infra,
+	}
 }
 
 // GibeParrot accepts only GET HTTP method. You get a parrot, you get a parrot, everyone gets a parrot!
 func (adapter *ParrotHTTPAdapter) GibeParrot(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		adapter.logger.Printf(`nope`)
+		adapter.Logger.Printf(`nope`)
 		_ = marshalAndWriteErrorResponse(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		adapter.logger.Printf(`whoops there's an error while reading request body`)
+		adapter.Logger.Printf(`whoops there's an error while reading request body`)
 		_ = marshalAndWriteErrorResponse(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 	// read resp body...
-	resp, err := adapter.infra.GetParrot(body)
+	resp, err := adapter.Infra.GetParrot(body)
 	if err != nil {
 		return
 	}
@@ -36,23 +43,23 @@ func (adapter *ParrotHTTPAdapter) GibeParrot(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		return
 	}
-	writeSuccessResponse(w, parrotGet)
+	writeResponse(w, parrotGet, http.StatusOK)
 }
 
 func (adapter *ParrotHTTPAdapter) AddParrot(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		adapter.logger.Printf(`lol_nope`)
+		adapter.Logger.Printf(`lol_nope`)
 		_ = marshalAndWriteErrorResponse(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		adapter.logger.Printf(`whoops there's an error while reading request body`)
+		adapter.Logger.Printf(`whoops there's an error while reading request body`)
 		_ = marshalAndWriteErrorResponse(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	resp, err := adapter.infra.AddParrot(body)
+	resp, err := adapter.Infra.AddParrot(body)
 	if err != nil {
 		return
 	}
@@ -60,5 +67,5 @@ func (adapter *ParrotHTTPAdapter) AddParrot(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		return
 	}
-	writeSuccessResponse(w, parrotAdd)
+	writeResponse(w, parrotAdd, http.StatusCreated)
 }

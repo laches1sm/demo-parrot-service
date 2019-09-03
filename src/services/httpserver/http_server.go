@@ -1,7 +1,7 @@
 package httpserver
 
 import (
-	"../../adapters"
+	"laches1sm/demo-parrot-service/adapters"
 	"log"
 	"net/http"
 )

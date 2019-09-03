@@ -44,11 +44,11 @@ func NewMongoRepo() *mongoRepo {
 }
 
 func (repo *mongoRepo) CreateParrot(parrot *domain.Parrot) (*domain.Parrot, error) {
-	parrotResult, err := repo.Collection.InsertOne(context.Background(), parrot)
+	_, err := repo.Collection.InsertOne(context.Background(), parrot)
 	if err != nil {
 		return nil, err
 	}
-	return repo.GetParrot(domain.Parrot(parrotResult))
+	return repo.GetParrot(parrot)
 
 }
 
