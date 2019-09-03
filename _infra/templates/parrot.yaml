@@ -1,0 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-parrot-service
+  labels:
+    app: parrot-service
+spec:
+  replicas: 1
+  ports:
+    - containerPort:7000
